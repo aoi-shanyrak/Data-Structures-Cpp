@@ -135,6 +135,7 @@ void Vector<T, A>::reserve(size_t new_capacity) {
   Vector_base<T, A> new_vb {vb.alloc, new_capacity};
   new_vb.space = new_vb.elem + size();
   std::uninitialized_move(vb.elem, vb.space, new_vb.elem);
+  destroy_elements();
   std::swap(vb, new_vb);
 }
 
@@ -154,7 +155,7 @@ void Vector<T, A>::push_back(const T& value) {
   if (capacity() == size()) {
     reserve(size() ? 2 * size() : 8);
   }
-  vb.alloc.construct(&vb.elem[size()], value);
+  std::allocator_traits<A>::construct(vb.alloc, &vb.elem[size()], value);
   ++vb.space;
 }
 
@@ -162,6 +163,6 @@ template <class T, class A>
 void Vector<T, A>::pop_back() {
   if (size() > 0) {
     --vb.space;
-    vb.alloc.destroy(vb.space);
+    std::allocator_traits<A>::destroy(vb.alloc, vb.space);
   }
 }
