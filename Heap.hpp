@@ -112,6 +112,11 @@ class Heap {
   template <typename U>
   void push_impl(P priority, U&& value) {
     data.emplace_back(priority, std::forward<U>(value));
-    heapUp(data.size() - 1);
+    try {
+      heapUp(data.size() - 1);
+    } catch (...) {
+      data.pop_back();
+      throw;
+    }
   }
 };
