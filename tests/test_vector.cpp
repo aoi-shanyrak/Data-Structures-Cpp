@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-#include "Vector.hpp"
+#include "../headers/Vector.hpp"
 
 void test_constructor() {
   std::cout << "Testing constructor... ";
