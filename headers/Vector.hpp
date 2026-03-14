@@ -2,7 +2,7 @@
 
 #include <memory>
 
-template <class T, class A = std::allocator<T>>
+template <typename T, typename A = std::allocator<T>>
 struct Vector_base {
   A alloc;
   T* elem;
@@ -28,7 +28,7 @@ struct Vector_base {
   }
 };
 
-template <class T, class A = std::allocator<T>>
+template <typename T, typename A = std::allocator<T>>
 class Vector {
  private:
   Vector_base<T, A> vb;
@@ -68,7 +68,7 @@ class Vector {
   void pop_back();
 };
 
-template <class T, class A>
+template <typename T, typename A>
 void Vector<T, A>::destroy_elements() {
   for (T* p = vb.elem; p != vb.space; ++p) {
     p->~T();
@@ -76,17 +76,17 @@ void Vector<T, A>::destroy_elements() {
   vb.space = vb.elem;
 }
 
-template <class T, class A>
+template <typename T, typename A>
 Vector<T, A>::Vector(typename A::size_type n, const T& value, const A& alloc) : vb {alloc, n} {
   std::uninitialized_fill(vb.elem, vb.space, value);
 }
 
-template <class T, class A>
+template <typename T, typename A>
 Vector<T, A>::Vector(const Vector<T, A>& a) : vb {a.vb.alloc, a.size()} {
   std::uninitialized_copy(a.begin(), a.end(), vb.elem);
 }
 
-template <class T, class A>
+template <typename T, typename A>
 Vector<T, A>::Vector(Vector&& a) noexcept : vb {a.vb.alloc, 0} {
   vb.elem = a.vb.elem;
   vb.space = a.vb.space;
@@ -94,7 +94,7 @@ Vector<T, A>::Vector(Vector&& a) noexcept : vb {a.vb.alloc, 0} {
   a.vb.elem = a.vb.space = a.vb.end = nullptr;
 }
 
-template <class T, class A>
+template <typename T, typename A>
 Vector<T, A>& Vector<T, A>::operator=(Vector&& a) noexcept {
   if (this != &a) {
     clear();
@@ -103,7 +103,7 @@ Vector<T, A>& Vector<T, A>::operator=(Vector&& a) noexcept {
   return *this;
 }
 
-template <class T, class A>
+template <typename T, typename A>
 Vector<T, A>& Vector<T, A>::operator=(const Vector& a) {
   if (capacity() < a.size()) {
     Vector temp {a};
@@ -128,7 +128,7 @@ Vector<T, A>& Vector<T, A>::operator=(const Vector& a) {
   return *this;
 }
 
-template <class T, class A>
+template <typename T, typename A>
 void Vector<T, A>::reserve(typename A::size_type new_capacity) {
   if (new_capacity <= capacity()) return;
 
@@ -139,7 +139,7 @@ void Vector<T, A>::reserve(typename A::size_type new_capacity) {
   std::swap(vb, new_vb);
 }
 
-template <class T, class A>
+template <typename T, typename A>
 void Vector<T, A>::resize(typename A::size_type new_size, T value) {
   reserve(new_size);
   if (size() < new_size) {
@@ -150,7 +150,7 @@ void Vector<T, A>::resize(typename A::size_type new_size, T value) {
   vb.space = vb.elem + new_size;
 }
 
-template <class T, class A>
+template <typename T, typename A>
 void Vector<T, A>::push_back(const T& value) {
   if (capacity() == size()) {
     reserve(size() ? 2 * size() : 8);
@@ -159,7 +159,7 @@ void Vector<T, A>::push_back(const T& value) {
   ++vb.space;
 }
 
-template <class T, class A>
+template <typename T, typename A>
 void Vector<T, A>::pop_back() {
   if (size() > 0) {
     --vb.space;
